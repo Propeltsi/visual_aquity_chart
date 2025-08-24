@@ -77,10 +77,11 @@
                     <path d="M12 2l2 2-2 2" stroke="currentColor" stroke-width="2" fill="none"/>
                 </svg>
             </button>
-            <button class="menu-item placeholder-button" onclick="showDisclaimer()" title="About this test">
+            <button class="menu-item backtotop-button" onclick="scrollToTopFromMenu()" title="Back to top">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                    <text x="12" y="16" text-anchor="middle" fill="currentColor" font-size="12">?</text>
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 16V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 11L12 7L16 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
             
@@ -126,22 +127,6 @@
                 </div>
                 <button onclick="closeResults()">Close</button>
                 <button onclick="restartTimedMode()">Restart</button>
-            </div>
-        </div>
-        
-        <!-- Disclaimer modal -->
-        <div class="disclaimer-modal" id="disclaimerModal">
-            <div class="disclaimer-content">
-                <h2>About</h2>
-                <div class="disclaimer-text">
-                    <p><strong>This is a generic visual acuity test for educational and demonstration purposes.</strong></p>
-                    <p>• This test does not replace professional eye examination</p>
-                    <p>• Results are indicative only</p>
-                    <p>• Screen size, distance, and lighting affect results</p>
-                    <p>• If you notice changes in your vision, consult an eye doctor</p>
-                    <p><em>Test uses generic geometric symbols (circle, square, paprika, house)</em></p>
-                </div>
-                <button onclick="closeDisclaimer()">I understand</button>
             </div>
         </div>
         

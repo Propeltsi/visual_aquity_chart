@@ -10,11 +10,45 @@ body {
     background: white;
 }
 
+/* Scroll-to-top button */
+.scroll-top-btn {
+    position: fixed;
+    left: 14px;
+    bottom: 14px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #007acc;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    cursor: pointer;
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity .3s ease, transform .3s ease, background .25s;
+}
+.scroll-top-btn:hover { background:#005f99; }
+.scroll-top-btn:active { transform: translateY(12px) scale(.95); }
+.scroll-top-btn.visible { opacity:1 !important; pointer-events:auto !important; transform: translateY(0) !important; }
+
+/* Hide only in portrait */
+@media (orientation: portrait) { .scroll-top-btn { display:none !important; } }
+
 .chart-container {
     width: 240mm;  /* Wider for more square format */
     margin: 0 auto;
     padding: 0;
     max-width: 100%;
+/* Back to top (replaces former About) */
+.backtotop-button {
+    background: #fd7e14 !important;
+}
+.backtotop-button:hover { background:#e8690b !important; }
     box-sizing: border-box;
 }
 
@@ -329,26 +363,24 @@ body {
 }
 
 /* Highlighted symbol styles */
+/* Use outline (no layout shift) and keep padding constant to avoid scroll jumps */
 .symbol.highlighted {
-    border: 5px solid #e55a2b;
+    outline: 5px solid #e55a2b;
     box-shadow: 0 0 25px rgba(229, 90, 43, 0.5);
     background-color: rgba(229, 90, 43, 0.08);
-    padding: 12px;
 }
 
 /* Answer feedback styles */
-.symbol.answer-correct {
-    border: 5px solid #28a745;
+ .symbol.answer-correct {
+    outline: 5px solid #28a745;
     box-shadow: 0 0 25px rgba(40, 167, 69, 0.5);
     background-color: rgba(40, 167, 69, 0.08);
-    padding: 12px;
 }
 
 .symbol.answer-wrong {
-    border: 5px solid #dc3545;
+    outline: 5px solid #dc3545;
     box-shadow: 0 0 25px rgba(220, 53, 69, 0.5);
     background-color: rgba(220, 53, 69, 0.08);
-    padding: 12px;
 }
 
 .symbol.answer-correct svg,
@@ -913,5 +945,25 @@ body {
         background: none;
         padding: 0;
         margin-bottom: 0;
+    }
+
+    /* Place timed info to the right, leaving center/labels free */
+    .timed-info {
+        top: 8px;
+        left: auto;
+        right: 75px; /* clear of controls stack */
+        transform: none;
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    /* Lift the top label slightly below controls/pill zone */
+    .row-label-top {
+        top: 54px; /* below controls + timed pill */
+    }
+
+    /* Hide dashed guideline lines in compact landscape view */
+    .row-line {
+        display: none !important;
     }
 }

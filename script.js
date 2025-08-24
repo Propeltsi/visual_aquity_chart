@@ -564,11 +564,32 @@ function highlightNextSymbol() {
   currentSymbol.classList.add("highlighted");
   console.log("Highlighted symbol:", currentSymbolIndex);
 
-  // Scroll to symbol if needed
-  currentSymbol.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
+  // Scroll behavior: in landscape snap mode scroll entire row to top; otherwise minimal movement centering symbol only if needed
+  const landscapeSnap = window.matchMedia(
+    "(orientation: landscape) and (max-height: 600px)"
+  ).matches;
+  if (landscapeSnap) {
+    const row = currentSymbol.closest(".row");
+    if (row) {
+      row.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  } else {
+    try {
+      const rect = currentSymbol.getBoundingClientRect();
+      const viewH = window.innerHeight || document.documentElement.clientHeight;
+      const topSafe = 90; // space for controls + pill
+      const bottomSafe = 40; // footer margin allowance
+      const needsScroll =
+        rect.top < topSafe || rect.bottom > viewH - bottomSafe;
+      if (needsScroll) {
+        const targetY =
+          window.scrollY + rect.top - (viewH / 2 - rect.height / 2) - 10;
+        window.scrollTo({ top: targetY, behavior: "smooth" });
+      }
+    } catch (e) {
+      currentSymbol.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
 
   // Update UI
   updateTimedModeInfo();
@@ -790,40 +811,11 @@ function restartTimedMode() {
   startTimedMode();
 }
 
-// Disclaimer modal functions
-function showDisclaimer() {
-  const modal = document.getElementById("disclaimerModal");
-  if (modal) {
-    modal.classList.add("visible");
-  }
-
-  // Close menu if open
-  if (menuOpen) {
-    toggleMenu();
-  }
+// Back to top via menu button
+function scrollToTopFromMenu() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (menuOpen) toggleMenu();
 }
-
-function closeDisclaimer() {
-  const modal = document.getElementById("disclaimerModal");
-  if (modal) {
-    modal.classList.remove("visible");
-  }
-}
-
-// Close disclaimer modal when clicking outside of content
-document.addEventListener("click", function (event) {
-  const disclaimerModal = document.getElementById("disclaimerModal");
-  const disclaimerContent = document.querySelector(".disclaimer-content");
-
-  if (disclaimerModal && disclaimerModal.classList.contains("visible")) {
-    if (
-      event.target === disclaimerModal &&
-      !disclaimerContent.contains(event.target)
-    ) {
-      closeDisclaimer();
-    }
-  }
-});
 
 // Removed legacy JS sticky scroll (replaced by pure CSS scroll-snap in styles.css)
 // Lightweight enhancement: keyboard & swipe navigation for landscape low-height mode
