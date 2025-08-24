@@ -825,83 +825,79 @@ document.addEventListener("click", function (event) {
   }
 });
 
-// Enhanced scroll behavior for landscape mode
-function initStickyScroll() {
+// Removed legacy JS sticky scroll (replaced by pure CSS scroll-snap in styles.css)
+// Lightweight enhancement: keyboard & swipe navigation for landscape low-height mode
+function enhanceLandscapeNavigation() {
   if (
-    window.matchMedia("(orientation: landscape) and (max-height: 600px)")
+    !window.matchMedia("(orientation: landscape) and (max-height: 600px)")
       .matches
-  ) {
-    const rows = document.querySelectorAll(".row");
+  )
+    return;
+  const rows = Array.from(document.querySelectorAll(".row"));
+  if (!rows.length) return;
 
-    // Add keyboard navigation
-    document.addEventListener("keydown", function (e) {
-      const currentRow = document.querySelector(".row:hover") || rows[0];
-      const currentIndex = Array.from(rows).indexOf(currentRow);
-
-      if (e.key === "ArrowDown" && currentIndex < rows.length - 1) {
-        e.preventDefault();
-        rows[currentIndex + 1].scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      } else if (e.key === "ArrowUp" && currentIndex > 0) {
-        e.preventDefault();
-        rows[currentIndex - 1].scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+  // Keyboard arrows / PageUp / PageDown
+  const keyHandler = (e) => {
+    const keysNext = ["ArrowDown", "PageDown", "ArrowRight"];
+    const keysPrev = ["ArrowUp", "PageUp", "ArrowLeft"];
+    if (![...keysNext, ...keysPrev].includes(e.key)) return;
+    e.preventDefault();
+    const scrollY = window.scrollY;
+    // Find closest row top
+    let closestIndex = 0;
+    let minDelta = Infinity;
+    rows.forEach((r, i) => {
+      const top = r.getBoundingClientRect().top + window.scrollY;
+      const d = Math.abs(top - scrollY);
+      if (d < minDelta) {
+        minDelta = d;
+        closestIndex = i;
       }
     });
+    let target = closestIndex + (keysNext.includes(e.key) ? 1 : -1);
+    target = Math.max(0, Math.min(rows.length - 1, target));
+    rows[target].scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  document.addEventListener("keydown", keyHandler);
 
-    // Add touch gesture support for better mobile experience
-    let startY = 0;
-    let isScrolling = false;
-
-    document.addEventListener("touchstart", function (e) {
-      startY = e.touches[0].clientY;
-      isScrolling = false;
-    });
-
-    document.addEventListener("touchmove", function (e) {
-      if (Math.abs(e.touches[0].clientY - startY) > 10) {
-        isScrolling = true;
-      }
-    });
-
-    document.addEventListener("touchend", function (e) {
-      if (!isScrolling) return;
-
-      const deltaY = e.changedTouches[0].clientY - startY;
-      const currentScroll = window.pageYOffset;
-      const rowHeight = window.innerHeight * 0.8;
-      const currentRowIndex = Math.round(currentScroll / rowHeight);
-
-      if (Math.abs(deltaY) > 50) {
-        // Minimum swipe distance
-        const direction = deltaY > 0 ? -1 : 1;
-        const targetIndex = Math.max(
-          0,
-          Math.min(rows.length - 1, currentRowIndex + direction)
-        );
-
-        if (rows[targetIndex]) {
-          rows[targetIndex].scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
+  // Basic vertical swipe detection
+  let touchStartY = null;
+  let touchStartTime = 0;
+  window.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 1) {
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    }
+  });
+  window.addEventListener("touchend", (e) => {
+    if (touchStartY == null) return;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+    if (Math.abs(dy) > 50 && dt < 800) {
+      const direction = dy < 0 ? 1 : -1; // swipe up -> next row
+      const scrollY = window.scrollY;
+      let closestIndex = 0;
+      let minDelta = Infinity;
+      rows.forEach((r, i) => {
+        const top = r.getBoundingClientRect().top + window.scrollY;
+        const d = Math.abs(top - scrollY);
+        if (d < minDelta) {
+          minDelta = d;
+          closestIndex = i;
         }
-      }
-    });
-  }
+      });
+      let target = Math.max(
+        0,
+        Math.min(rows.length - 1, closestIndex + direction)
+      );
+      rows[target].scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    touchStartY = null;
+  });
 }
 
 // Generate initial chart when page loads
 document.addEventListener("DOMContentLoaded", function () {
   generateChart();
-  initStickyScroll();
-
-  // Re-initialize sticky scroll on orientation change
-  window.addEventListener("orientationchange", function () {
-    setTimeout(initStickyScroll, 500);
-  });
+  enhanceLandscapeNavigation();
 });

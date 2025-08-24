@@ -4,6 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visual Acuity Chart - Random</title>
+    <!-- Primary Meta -->
+    <meta name="description" content="Interactive visual acuity style chart demo with geometric symbols. Educational & non-commercial use only.">
+    <meta name="author" content="Timo Peltoniemi">
+    <meta name="keywords" content="visual acuity, eye test, chart, demo, educational, javascript, symbols">
+    <link rel="canonical" href="https://propeltsi.github.io/visual_aquity_chart/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Visual Acuity Chart Demo">
+    <meta property="og:description" content="Interactive visual acuity style chart demo with geometric symbols. Educational use.">
+    <meta property="og:url" content="https://propeltsi.github.io/visual_aquity_chart/">
+    <meta property="og:image" content="https://propeltsi.github.io/visual_aquity_chart/img/Main%20screen.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Visual Acuity Chart Demo">
+    <meta name="twitter:description" content="Interactive visual acuity style chart demo with geometric symbols.">
+    <meta name="twitter:image" content="https://propeltsi.github.io/visual_aquity_chart/img/Main%20screen.png">
+
+    <!-- Theme / PWA basics -->
+    <meta name="theme-color" content="#000000">
+    <meta name="application-name" content="Visual Acuity Chart">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Acuity Chart">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="apple-touch-icon" href="img/Main%20screen.png">
+    <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -121,5 +151,12 @@
     </div>
 
     <script src="script.js"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('service-worker.js').catch(err => console.error('SW registration failed', err));
+                });
+            }
+        </script>
 </body>
 </html>

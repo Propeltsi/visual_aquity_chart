@@ -849,49 +849,62 @@ body {
     }
 }
 
-/* Landscape mode with sticky scrolling */
+/* Landscape mode (low height) improved snap scrolling */
 @media (orientation: landscape) and (max-height: 600px) {
     body {
         scroll-behavior: smooth;
-    }
-    
-    .chart-container {
-        scroll-snap-type: y mandatory;
         overflow-y: auto;
         height: 100vh;
+        scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain; /* prevent bounce */
+    scroll-padding-top: 80px; /* space for top labels */
     }
-    
+
+    .chart-container {
+        height: auto; /* let body handle scrolling */
+        overflow: visible;
+        padding-bottom: 40px;
+    }
+
     .row {
         scroll-snap-align: start;
         scroll-snap-stop: always;
-        min-height: 80vh;
+        min-height: 100vh; /* full viewport for clarity */
         display: flex;
         align-items: center;
-        justify-content: space-evenly; /* Keep original distribution */
-        padding: 60px 5% 0 5% !important; /* Add top padding for label space */
-        margin-top: 0;
+        justify-content: space-evenly;
+        padding: 90px 4% 40px 4% !important; /* space for labels + footer */
+        margin: 0;
         position: relative;
+        box-sizing: border-box;
     }
-    
-    .row-label {
-        display: none; /* Hide side labels in landscape */
-    }
-    
+
+    .row-label { display: none; }
+
     .row-label-top {
-        display: block !important; /* Show top labels in landscape */
-        font-size: 14pt;
+        display: block !important;
+        font-size: 18px;
         color: #333;
-        background: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        top: 20px;
+        background: rgba(255,255,255,0.85);
+        padding: 6px 12px;
+        border-radius: 6px;
+        top: 18px;
         z-index: 10;
+        backdrop-filter: blur(3px);
     }
-    
-    .title, .controls, .footer {
+
+    .title {
+        margin: 20px 0 10px;
+        font-size: 18px;
         scroll-snap-align: start;
     }
-    
+
+    .footer {
+        scroll-snap-align: start;
+        padding: 20px 0 60px;
+        margin-top: 0;
+    }
+
     .controls {
         position: fixed;
         top: 10px;
