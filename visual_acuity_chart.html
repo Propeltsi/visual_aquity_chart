@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Acuity Chart - Random</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chart-container">
+        <div class="title">Visual Acuity Chart</div>
+        
+        <div class="controls" id="controls">
+            <button class="settings-button" onclick="toggleMenu()" title="Settings">
+                <div class="hamburger" id="hamburgerIcon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <svg class="stop-icon" id="stopIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                    <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>
+                </svg>
+            </button>
+            <button class="menu-item refresh-button" onclick="generateNewChart()" title="Generate New Random Chart">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 12C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C9.25022 4 6.82447 5.38734 5.38451 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M9 7.5L5.38451 7.5L5.38451 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="menu-item color-button" onclick="toggleColors()" title="Toggle Background and Text Colors">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+                </svg>
+            </button>
+            <button class="menu-item print-button" onclick="window.print()" title="Print Chart">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="6,9 6,2 18,2 18,9" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M6,18H4a2,2 0 0,1 -2,-2v-5a2,2 0 0,1 2,-2H20a2,2 0 0,1 2,2v5a2,2 0 0,1 -2,2H18" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+            <button class="menu-item timer-button" onclick="toggleTimedMode()" title="Timed Mode">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 2l2 2-2 2" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+            </button>
+            <button class="menu-item placeholder-button" onclick="showDisclaimer()" title="About this test">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <text x="12" y="16" text-anchor="middle" fill="currentColor" font-size="12">?</text>
+                </svg>
+            </button>
+            
+            <!-- Timed mode controls in hamburger style -->
+            <button class="menu-item timed-pause-button" onclick="toggleTimedPause()" title="Pause/Resume" style="display: none;">
+                <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+                    <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+                </svg>
+                <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                    <polygon points="5,3 19,12 5,21" fill="currentColor"/>
+                </svg>
+            </button>
+            <button class="menu-item timed-correct-button" onclick="recordAnswer(true)" title="Correct" style="display: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="menu-item timed-wrong-button" onclick="recordAnswer(false)" title="Wrong" style="display: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div id="chart-content">
+            <!-- Chart will be generated here -->
+        </div>
+        
+        <!-- Timed mode UI elements -->
+        <div class="timed-info" id="timedInfo">
+            <span id="symbolCounter">Symbol 1/36</span> | 
+            <span id="timerDisplay">5s</span>
+        </div>
+        
+        <!-- Results modal -->
+        <div class="results-modal" id="resultsModal">
+            <div class="results-content">
+                <h2>Test Results</h2>
+                <div class="results-stats" id="resultsStats">
+                    <!-- Results will be populated here -->
+                </div>
+                <button onclick="closeResults()">Close</button>
+                <button onclick="restartTimedMode()">Restart</button>
+            </div>
+        </div>
+        
+        <!-- Disclaimer modal -->
+        <div class="disclaimer-modal" id="disclaimerModal">
+            <div class="disclaimer-content">
+                <h2>About</h2>
+                <div class="disclaimer-text">
+                    <p><strong>This is a generic visual acuity test for educational and demonstration purposes.</strong></p>
+                    <p>• This test does not replace professional eye examination</p>
+                    <p>• Results are indicative only</p>
+                    <p>• Screen size, distance, and lighting affect results</p>
+                    <p>• If you notice changes in your vision, consult an eye doctor</p>
+                    <p><em>Test uses generic geometric symbols (circle, square, paprika, house)</em></p>
+                </div>
+                <button onclick="closeDisclaimer()">I understand</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Geometric Symbols • Educational/Demo use • Not a medical device
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
