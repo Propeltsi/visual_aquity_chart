@@ -379,7 +379,12 @@ function startTimedMode() {
 
   // Clear any previous answer feedback
   allSymbols.forEach((symbol) => {
-    symbol.classList.remove("highlighted", "answer-correct", "answer-wrong");
+    symbol.classList.remove("symbol-correct", "symbol-wrong", "symbol-missed", "current-symbol");
+    // Remove any existing arrows
+    const existingArrow = symbol.querySelector(".symbol-arrow");
+    if (existingArrow) {
+      existingArrow.remove();
+    }
   });
 
   // Update UI for timed mode
@@ -424,7 +429,12 @@ function stopTimedMode() {
   // Remove all highlights and answer feedback
   if (allSymbols && allSymbols.length > 0) {
     allSymbols.forEach((symbol) => {
-      symbol.classList.remove("highlighted", "answer-correct", "answer-wrong");
+      symbol.classList.remove("symbol-correct", "symbol-wrong", "symbol-missed", "current-symbol");
+      // Remove any existing arrows
+      const existingArrow = symbol.querySelector(".symbol-arrow");
+      if (existingArrow) {
+        existingArrow.remove();
+      }
     });
   }
 
@@ -554,14 +564,21 @@ function highlightNextSymbol() {
     return;
   }
 
-  // Remove previous highlight
+  // Remove previous arrows and current symbol class
   allSymbols.forEach((symbol) => {
-    symbol.classList.remove("highlighted");
+    const existingArrow = symbol.querySelector(".symbol-arrow");
+    if (existingArrow) {
+      existingArrow.remove();
+    }
+    symbol.classList.remove("current-symbol");
   });
 
-  // Highlight current symbol
+  // Add arrow to current symbol and mark as current
   const currentSymbol = allSymbols[currentSymbolIndex];
-  currentSymbol.classList.add("highlighted");
+  const arrow = document.createElement("div");
+  arrow.className = "symbol-arrow";
+  currentSymbol.appendChild(arrow);
+  currentSymbol.classList.add("current-symbol");
   console.log("Highlighted symbol:", currentSymbolIndex);
 
   // Scroll behavior: in landscape snap mode scroll entire row to top; otherwise minimal movement centering symbol only if needed
@@ -648,16 +665,22 @@ function recordAnswer(isCorrect) {
   // Get current symbol and add visual feedback
   const currentSymbol = allSymbols[currentSymbolIndex];
 
-  // Remove highlight class
-  currentSymbol.classList.remove("highlighted");
+  // Remove arrow and current symbol class
+  const existingArrow = currentSymbol.querySelector(".symbol-arrow");
+  if (existingArrow) {
+    existingArrow.remove();
+  }
+  currentSymbol.classList.remove("current-symbol");
 
   // Add answer feedback visual style
   if (isCorrect === true) {
-    currentSymbol.classList.add("answer-correct");
+    currentSymbol.classList.add("symbol-correct");
   } else if (isCorrect === false) {
-    currentSymbol.classList.add("answer-wrong");
+    currentSymbol.classList.add("symbol-wrong");
+  } else {
+    // null (no answer) - missed
+    currentSymbol.classList.add("symbol-missed");
   }
-  // Note: for null (no answer), we don't add any visual feedback class
 
   // Record the answer
   timedModeResults.push({
